@@ -1,14 +1,35 @@
-import { Browser, Builder, until, Key, By } from "selenium-webdriver";
+import { Builder, WebDriver } from "selenium-webdriver";
+import chrome from "selenium-webdriver/chrome";
 
-export default async function driverInializer() {
-  let driver = new Builder().forBrowser("chrome").build();
-  try {
-    await driver.get(
-      "https://www.google.com/search?q=mh+world&oq=mh+world&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDIzMDVqMGo3qAIAsAIA&client=ubuntu-chr&sourceid=chrome&ie=UTF-8",
-    );
-    console.log(await driver.getTitle());
-    await driver.quit();
-  } catch (e) {
-    console.log(e);
+class ChromeDriver {
+  static instance: ChromeDriver | null = null;
+  webDriver: Promise<WebDriver | null>;
+
+  constructor(driver_initializer: () => Promise<WebDriver | null>) {
+    this.webDriver = driver_initializer();
+  }
+
+  static get_instance() {
+    if (this.instance == null) {
+      this.instance = new ChromeDriver(this.driver_initializer);
+    }
+    return this.instance;
+  }
+
+  static async driver_initializer(): Promise<WebDriver | null> {
+    const chromeOption = new chrome.Options();
+    chromeOption.addArguments("--headless=new");
+    try {
+      let driver = await new Builder()
+        .setChromeOptions(chromeOption)
+        .forBrowser("chrome")
+        .build();
+      return driver;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   }
 }
+const chromeDriver = ChromeDriver.get_instance();
+export default chromeDriver;
