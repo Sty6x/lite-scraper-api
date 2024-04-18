@@ -1,35 +1,19 @@
-import { Builder, WebDriver } from "selenium-webdriver";
-import chrome from "selenium-webdriver/chrome";
+import { WebDriver } from "selenium-webdriver";
+import chromeDriver, { CustomWebDriver } from "../utils/chrome_driver";
 
-class ChromeDriver {
-  static instance: ChromeDriver | null = null;
-  webDriver: Promise<WebDriver | null>;
-
-  constructor(driver_initializer: () => Promise<WebDriver | null>) {
-    this.webDriver = driver_initializer();
+class Scraper {
+  private driver: CustomWebDriver;
+  constructor(custom_driver: CustomWebDriver) {
+    this.driver = custom_driver;
   }
-
-  static get_instance() {
-    if (this.instance == null) {
-      this.instance = new ChromeDriver(this.driver_initializer);
-    }
-    return this.instance;
-  }
-
-  static async driver_initializer(): Promise<WebDriver | null> {
-    const chromeOption = new chrome.Options();
-    chromeOption.addArguments("--headless=new");
-    try {
-      let driver = await new Builder()
-        .setChromeOptions(chromeOption)
-        .forBrowser("chrome")
-        .build();
-      return driver;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
+  async testScrape(userQuery: {
+    [key: string]: any;
+    webURL: string;
+  }): Promise<void> {
+    let l = await this.driver.get_driver();
+    console.log(typeof l);
+    return;
   }
 }
-const chromeDriver = ChromeDriver.get_instance();
-export default chromeDriver;
+const scraper = new Scraper(chromeDriver);
+scraper.testScrape({ data: "njgee", webURL: "da" });
