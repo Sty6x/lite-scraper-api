@@ -4,7 +4,7 @@ import { WebDriver } from "selenium-webdriver";
 const api_routes = require("./routes/index");
 const express = require("express");
 const app: Express = express();
-const port = 3002;
+const port = 3005;
 
 app.use(express.urlencoded());
 app.use(express.json());
