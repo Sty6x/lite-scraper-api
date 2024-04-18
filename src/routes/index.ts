@@ -6,7 +6,7 @@ import chromeDriver from "../utils/chrome_driver";
 const router = express.Router();
 router.post("/scrape", parser, (req: Request, res: Response) => {
   const scraper = new Scraper(chromeDriver);
-  scraper.testScrape(req.body.parsedData);
+  scraper.scrape(req.body.parsedData);
   console.log(req.body.parsedData);
   res.json(req.body.parsedData);
 });
