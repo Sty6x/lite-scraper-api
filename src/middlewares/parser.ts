@@ -2,11 +2,20 @@ import { Request, Response, NextFunction } from "express";
 import { user_query } from "../types/user_query";
 
 async function parser(req: Request, res: Response, next: NextFunction) {
+  const req_body: user_query = { ...req.body };
   const parseDataSchema: user_query = {
     ...req.body,
     dataQuery: JSON.parse(req.body.dataQuery),
   };
-  req.body.parsedData = { ...parseDataSchema };
+  if (req_body.multipageQuery === undefined) {
+    req.body.parsedData = { ...parseDataSchema };
+    next();
+    return;
+  }
+  req.body.parsedData = {
+    ...parseDataSchema,
+    multipageQuery: JSON.parse(req.body.multipageQuery),
+  };
   next();
 }
 

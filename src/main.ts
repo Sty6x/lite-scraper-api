@@ -1,6 +1,4 @@
 import { Express, Request, Response } from "express";
-import web_scraper from "./utils/chrome_driver";
-import { WebDriver } from "selenium-webdriver";
 const api_routes = require("./routes/index");
 const express = require("express");
 const app: Express = express();
