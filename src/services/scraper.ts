@@ -1,4 +1,4 @@
-import { By, until } from "selenium-webdriver";
+import { By, WebElement, until } from "selenium-webdriver";
 import { CustomWebDriver } from "../utils/chrome_driver";
 import { error } from "console";
 import { user_query } from "../types/user_query";
@@ -14,28 +14,48 @@ export class Scraper {
       if (chrome === null) throw error;
       await chrome.get(websiteURL);
       console.log(await chrome.getTitle());
-      const tmp_data_arr_count = await chrome.findElements(
-        By.css(Object.values(dataQuery)[0])
+      const raw_data = await this.get_raw_query_data(dataQuery);
+      const populated_query = await this.get_data(
+        raw_data as Array<WebElement[]>,
+        dataQuery
       );
-      const items = tmp_data_arr_count.map(async () => {
-        const query_values = Object.values(dataQuery);
-        const query_keys = Object.keys(dataQuery);
-        let populated_query: { [key: string]: any } = {};
-        const bulk_fetch = query_values.map(async (_, i) => {
-          const item = chrome.findElement(By.css(query_values[i]));
-          return item;
-        });
-        const p = await Promise.all(bulk_fetch);
-        for (let i = 0; i < query_values.length; i++) {
-          populated_query[query_keys[i]] = await p[i].getText();
-        }
-        console.log(await p[0].getText());
-        return populated_query;
-      });
-      const fetched_items = await Promise.all(items);
-      console.log(fetched_items);
+      console.log(raw_data);
     } catch (error) {
       console.error("Driver does not exist.");
     }
+  }
+
+  private async get_raw_query_data(dataQuery: { [key: string]: any }) {
+    const chrome = await this.driver.get_driver();
+    if (!chrome) return;
+    const query_keys = Object.keys(dataQuery);
+    const map_query = query_keys.map(async (query) => {
+      try {
+        const g = await chrome.findElements(By.css(dataQuery[query]));
+        return g;
+      } catch (e) {
+        throw error(e);
+      }
+    });
+    const raw_data = await Promise.all(map_query);
+    return raw_data;
+  }
+
+  private async get_data(
+    raw_data: Array<WebElement[]>,
+    data_query: { [key: string]: any }
+  ) {
+    const query_keys = Object.keys(data_query);
+    console.log(raw_data[0]);
+    const populate_query = raw_data[0].map(async (_, i) => {
+      let populated_query: { [key: string]: any } = {};
+      for (let j = 0; j < query_keys.length; j++) {
+        populated_query[query_keys[j]] = await raw_data[j][i].getText();
+      }
+      return populated_query;
+    });
+    const resolve_text_data = await Promise.all(populate_query);
+    console.log(resolve_text_data);
+    return resolve_text_data;
   }
 }
