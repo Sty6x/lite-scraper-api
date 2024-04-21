@@ -13,6 +13,7 @@ export class CustomWebDriver {
 
   private async driver_initializer(): Promise<WebDriver | null> {
     const chromeOption = new chrome.Options();
+    chromeOption.setPageLoadStrategy("eager");
     chromeOption.addArguments("--headless=new");
     try {
       let driver = await new Builder()

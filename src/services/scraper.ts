@@ -1,7 +1,9 @@
 import { By, WebDriver, WebElement, until } from "selenium-webdriver";
-import { CustomWebDriver } from "../utils/chrome_driver";
+import { CustomWebDriver } from "../utils/custom_web_driver";
 import { error } from "console";
 import { user_query } from "../types/user_query";
+import { REPL_MODE_STRICT } from "repl";
+import { captureRejectionSymbol } from "events";
 
 export class Scraper {
   private driver: CustomWebDriver;
@@ -10,19 +12,41 @@ export class Scraper {
   }
   async scrape({ websiteURL, dataQuery }: user_query): Promise<void> {
     let chrome = await this.driver.get_driver();
+
     try {
       if (chrome === null) throw error;
-      console.log(chrome?.getSession());
-      await chrome.get(websiteURL);
+      const test_selector = Object.values(dataQuery)[1];
+      let retries = 10;
+
+      async function retry_element_search(chrome: WebDriver, retries: number) {
+        if (chrome === null) throw error;
+        try {
+          await chrome.manage().setTimeouts({ implicit: 2000 });
+          await chrome.get(websiteURL);
+          const g = await chrome.findElements(By.css(".amount"));
+          console.log(g[0]);
+          if (g[0] === undefined) {
+            throw error;
+          }
+        } catch (e) {
+          console.log(retries);
+          retries--;
+          if (retries > 0) return retry_element_search(chrome, retries);
+          console.error(e);
+          return;
+        }
+      }
+      await retry_element_search(chrome, retries);
+
       console.log(await chrome.getTitle());
-      const raw_data = await this.get_raw_query_data(chrome, dataQuery);
-      const populated_query = await this.get_data(
-        raw_data as Array<WebElement[]>,
-        dataQuery
-      );
-      console.log(populated_query);
+      // const raw_data = await this.get_raw_query_data(chrome, dataQuery);
+      // const populated_query = await this.get_data(
+      //   raw_data as Array<WebElement[]>,
+      //   dataQuery
+      // );
+      // console.log(populated_query);
     } catch (error) {
-      console.error("Driver does not exist.");
+      console.error("Something went wrong.");
       console.error(error);
     }
   }
@@ -32,7 +56,6 @@ export class Scraper {
     dataQuery: { [key: string]: any }
   ) {
     if (chrome === null) return;
-    console.log(chrome?.getSession());
     const query_values = Object.values(dataQuery);
     const map_query = query_values.map(async (query) => {
       try {
@@ -61,6 +84,6 @@ export class Scraper {
       return populated_query;
     });
     const resolve_text_data = await Promise.all(populate_query);
-    return resolve_text_data.filter((item) => Object.values(item)[0] !== "");
+    return resolve_text_data;
   }
 }

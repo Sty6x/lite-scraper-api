@@ -1,7 +1,7 @@
 import express, { Response, Request } from "express";
 import { parser } from "../middlewares/parser";
 import { Scraper } from "../services/scraper";
-import chromeDriver from "../utils/chrome_driver";
+import chromeDriver from "../utils/custom_web_driver";
 
 const router = express.Router();
 router.post("/scrape", parser, (req: Request, res: Response) => {
