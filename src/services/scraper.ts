@@ -20,14 +20,14 @@ export class Scraper {
       const g = await chrome.findElement(By.css(test_selector));
       console.log(g);
       console.log(await chrome.getTitle());
-      const raw_data = await this.get_raw_query_data(chrome, dataQuery); // const populated_query = await this.get_data(
-      console.log(raw_data);
+      const raw_data = await this.get_raw_query_data(chrome, dataQuery);
       const populated_query = await this.get_data(
         raw_data as Array<WebElement[]>,
         dataQuery
       );
+      console.log(populated_query);
     } catch (error) {
-      console.error("Something went wrong.");
+      console.error("Driver does not exist.");
       console.error(error);
     }
   }
@@ -37,6 +37,7 @@ export class Scraper {
     dataQuery: { [key: string]: any }
   ) {
     if (chrome === null) return;
+    console.log(chrome?.getSession());
     const query_values = Object.values(dataQuery);
     const map_query = query_values.map(async (query) => {
       try {
