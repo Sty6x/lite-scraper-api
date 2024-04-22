@@ -15,8 +15,10 @@ export class Scraper {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
       const page = await browser.newPage({ userAgent: user_agent });
       await page.goto(this.query.websiteURL);
+      await page.screenshot({ path: "screenshot.png" });
+      await page.mouse.wheel(0, 1000);
       const raw_data = await this.get_raw_data(page);
-      const populated_query = await this.get_data(raw_data);
+      const populated_query = await this.get_data(raw_data as Array<Locator[]>);
       console.log(populated_query);
     } catch (error) {
       console.error("Something went wrong.");
@@ -29,8 +31,8 @@ export class Scraper {
     const query_values = Object.values(this.query.dataQuery);
     const map_query = query_values.map(async (query) => {
       try {
-        const g = await page.locator(query).all();
-        return g;
+        const queried_items = await page.locator(query).all();
+        return queried_items;
       } catch (e) {
         throw error(e);
       }
