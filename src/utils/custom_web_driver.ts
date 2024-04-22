@@ -1,3 +1,4 @@
+import { createProxyMiddleware } from "http-proxy-middleware";
 import { Builder, ChromiumWebDriver, WebDriver } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome";
 
@@ -15,8 +16,8 @@ export class CustomWebDriver {
     const chromeOption = new chrome.Options();
     const user_agent =
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
-    chromeOption.setPageLoadStrategy("eager");
     chromeOption.addArguments("--headless=new");
+    chromeOption.addArguments(`--user-agent=${user_agent}`);
     try {
       let driver = await new Builder()
         .setChromeOptions(chromeOption)
