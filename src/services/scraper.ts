@@ -8,7 +8,7 @@ export class Scraper {
   constructor(user_query: user_query) {
     this.query = user_query;
   }
-  async scrape(): Promise<void> {
+  public async scrape(): Promise<void> {
     const browser = await chromium.launch();
     try {
       const user_agent =
@@ -45,7 +45,8 @@ export class Scraper {
       for (let j = 0; j < query_keys.length; j++) {
         const query_item = raw_data[j][i];
         if (query_item === undefined) break;
-        populated_query[query_keys[j]] = await query_item.textContent();
+        const data = await query_item.textContent();
+        populated_query[query_keys[j]] = data?.trim();
       }
       return populated_query;
     });
