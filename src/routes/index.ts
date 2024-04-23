@@ -6,8 +6,8 @@ const router = express.Router();
 router.post("/scrape", parser, async (req: Request, res: Response) => {
   const scraper = new ScraperInterface(req.body.parsedData);
   await scraper.initialize_scraper();
-  const scraped_data = await scraper.single_page_scrape();
-  console.log(scraped_data);
+  const scraped_data = await scraper.multi_page();
+  // console.log(scraped_data);
   res.json(req.body.parsedData);
 });
 

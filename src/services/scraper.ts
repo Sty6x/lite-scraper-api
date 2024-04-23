@@ -1,25 +1,25 @@
-import { Locator, Page, chromium } from "playwright";
+import { Browser, Locator, Page, chromium } from "playwright";
 import { error } from "console";
 import { task_schema, user_query } from "../types/user_query_types";
 
 export class Scraper {
   query: user_query;
   page: Page | null;
+  browser: Browser | null;
   constructor(user_query: user_query) {
     this.query = user_query;
     this.page = null;
+    this.browser = null;
   }
   async scrape(): Promise<Array<task_schema>> {
-    const browser = await chromium.launch();
     try {
       const raw_data = await this.get_raw_data();
       const populated_query = await this.get_data(raw_data as Array<Locator[]>);
-      await browser.close();
       return populated_query;
     } catch (error) {
       console.error("Something went wrong.");
       console.error(error);
-      await browser.close();
+      await this.browser?.close();
       return [];
     }
   }
