@@ -1,6 +1,6 @@
 import { Locator, Page, chromium } from "playwright";
 import { error } from "console";
-import { user_query } from "../types/user_query_types";
+import { task_schema, user_query } from "../types/user_query_types";
 
 export class Scraper {
   query: user_query;
@@ -9,18 +9,18 @@ export class Scraper {
     this.query = user_query;
     this.page = null;
   }
-  async scrape(): Promise<user_query> {
+  async scrape(): Promise<Array<task_schema>> {
     const browser = await chromium.launch();
     try {
       const raw_data = await this.get_raw_data();
       const populated_query = await this.get_data(raw_data as Array<Locator[]>);
       await browser.close();
-      return { ...this.query, dataQuery: populated_query };
+      return populated_query;
     } catch (error) {
       console.error("Something went wrong.");
       console.error(error);
       await browser.close();
-      return this.query;
+      return [];
     }
   }
 
@@ -38,7 +38,9 @@ export class Scraper {
     const raw_data = await Promise.all(map_query);
     return raw_data;
   }
-  private async get_data(raw_data: Array<Locator[]>) {
+  private async get_data(
+    raw_data: Array<Locator[]>
+  ): Promise<Array<task_schema>> {
     const query_keys = Object.keys(this.query.dataQuery);
     const populate_query = raw_data[0].map(async (_, i) => {
       let populated_query: { [key: string]: any } = {};
