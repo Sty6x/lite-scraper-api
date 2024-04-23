@@ -1,5 +1,4 @@
-import { CustomWebDriver } from "../utils/custom_web_driver";
-import { ChromiumBrowser, Locator, Page, chromium } from "playwright";
+import { Locator, Page, chromium } from "playwright";
 import { error } from "console";
 import { user_query } from "../types/user_query";
 
@@ -8,23 +7,38 @@ export class Scraper {
   constructor(user_query: user_query) {
     this.query = user_query;
   }
-  public async scrape(): Promise<void> {
+  public async scrape(): Promise<user_query> {
     const browser = await chromium.launch();
     try {
       const user_agent =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
       const page = await browser.newPage({ userAgent: user_agent });
       await page.goto(this.query.websiteURL);
-      await page.screenshot({ path: "screenshot.png" });
       await page.mouse.wheel(0, 1000);
       const raw_data = await this.get_raw_data(page);
       const populated_query = await this.get_data(raw_data as Array<Locator[]>);
-      console.log(populated_query);
+      return { ...this.query, dataQuery: populated_query };
     } catch (error) {
       console.error("Something went wrong.");
       console.error(error);
       await browser.close();
+      return this.query;
     }
+  }
+
+  public async multi_page() {
+    if (!this.query.multipageConfig) return;
+    const { end_page, starting_page } = this.query.multipageConfig;
+    const pages = [];
+    const d: { [key: string]: any } = {};
+    let end = end_page;
+    let starting = starting_page;
+    while (starting < end) {
+      d[starting.toString()] = [];
+      starting++;
+    }
+    console.log(d);
+    console.log(starting_page);
   }
 
   private async get_raw_data(page: Page) {

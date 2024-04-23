@@ -8,14 +8,14 @@ async function parser(req: Request, res: Response, next: NextFunction) {
     ...req.body,
     dataQuery: JSON.parse(req.body.dataQuery),
   };
-  if (req_body.multipageQuery === undefined) {
+  if (req_body.multipageConfig === undefined) {
     req.body.parsedData = { ...parseDataSchema };
     next();
     return;
   }
   req.body.parsedData = {
     ...parseDataSchema,
-    multipageQuery: JSON.parse(req.body.multipageQuery),
+    multipageConfig: JSON.parse(req.body.multipageConfig),
   };
   next();
 }

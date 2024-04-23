@@ -4,7 +4,7 @@ type task_schema = {
 
 export type user_query = {
   websiteURL: string;
-  multipageQuery?: {
+  multipageConfig?: {
     starting_page: number;
     end_page: number;
     next_element: string;
