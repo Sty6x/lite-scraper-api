@@ -1,6 +1,6 @@
 import { Locator, Page, chromium } from "playwright";
 import { error } from "console";
-import { user_query } from "../types/user_query";
+import { user_query } from "../types/user_query_types";
 
 export class Scraper {
   query: user_query;

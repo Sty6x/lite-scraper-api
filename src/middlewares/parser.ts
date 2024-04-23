@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { user_query } from "../types/user_query";
+import { user_query } from "../types/user_query_types";
 
 async function parser(req: Request, res: Response, next: NextFunction) {
   const req_body: user_query = { ...req.body };

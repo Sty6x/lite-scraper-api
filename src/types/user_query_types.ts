@@ -1,4 +1,4 @@
-type task_schema = {
+export type task_schema = {
   [key: string]: any;
 };
 
