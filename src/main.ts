@@ -6,11 +6,12 @@ const port = 3005;
 
 app.use(express.urlencoded());
 app.use(express.json());
-app.use("/api/v1", api_routes);
+
 app.listen(port, async () => {
   console.log("Web scraping service");
 });
 
+app.use("/api/v1/scrape", api_routes);
 app.get("/", async (req: Request, res: Response) => {
   res.json({ Message: "Hello and welcome" });
 });
