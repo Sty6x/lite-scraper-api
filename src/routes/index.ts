@@ -6,7 +6,6 @@ import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.get("/", auth);
 router.post("/", parser, async (req: Request, res: Response) => {
   const scraper = new ScraperInterface(req.body.parsedData);
   await scraper.initialize_scraper();
