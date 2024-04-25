@@ -1,16 +1,18 @@
 import express, { Response, Request } from "express";
 import { parser } from "../middlewares/parser";
 import { ScraperInterface } from "../services/scraper_interface";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { writeFile, readFile } from "fs/promises";
+import { auth } from "../middlewares/auth";
 
 const router = express.Router();
+
+router.get("/", auth);
 router.post("/", parser, async (req: Request, res: Response) => {
   const scraper = new ScraperInterface(req.body.parsedData);
   await scraper.initialize_scraper();
   const scraped_data = await scraper.multi_page();
   const toJSONdata = JSON.stringify({});
-  const parsedData = await writeFile("./user_query.json", toJSONdata, "utf-8");
+  const parsedData = await writeFile("./users.json", toJSONdata, "utf-8");
   res.send({ queried: {} });
 });
 
