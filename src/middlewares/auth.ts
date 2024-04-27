@@ -10,6 +10,7 @@ type t_user_database = {
 };
 
 async function auth(req: Request, res: Response, next: NextFunction) {
+  console.log(req.sessionStore);
   const users_data = await readFile("./users.json", "utf8");
   const users_database: t_user_database = JSON.parse(users_data);
   const user_session_id = req.headers.cookie;
