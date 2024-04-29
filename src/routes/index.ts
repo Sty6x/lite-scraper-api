@@ -2,7 +2,6 @@ import express, { Response, Request } from "express";
 import { parser } from "../middlewares/parser";
 import { ScraperInterface } from "../services/scraper_interface";
 import { writeFile, readFile } from "fs/promises";
-import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
@@ -15,8 +14,6 @@ router.post("/", parser, async (req: Request, res: Response) => {
   res.send({ queried: {} });
 });
 
-// after user receives the json data, the file will be saved locally in the
-// local storage of their browser
 router.get("/download", async (req: Request, res: Response) => {
   res.download("./user_query.json", (err) => {
     if (err) {

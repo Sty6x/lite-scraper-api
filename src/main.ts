@@ -22,7 +22,7 @@ app.use(
     }),
     secret: "1234",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { secure: true, maxAge: 100000 },
   }),
 );
