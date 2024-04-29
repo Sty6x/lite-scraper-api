@@ -1,21 +1,20 @@
 import { Express, Request, Response } from "express";
 import { auth } from "./middlewares/auth";
 import session from "express-session";
-import RedisStore from "connect-redis";
-import { createClient } from "redis";
+import MongoStore from "connect-mongo";
+import "dotenv/config";
 
 const api_routes = require;
 const express = require("express");
 const app: Express = express();
 const port = 3005;
-const redis_client = createClient();
 
 app.use(express.urlencoded());
 app.use(express.json());
 app.set("trust proxy", 1);
 app.use(
   session({
-    store: new RedisStore({ client: redis_client, prefix: "localhost" }),
+    store: MongoStore.create({ mongoUrl: process.env.DB_URI }),
     secret: "1234",
     resave: false,
     saveUninitialized: true,
