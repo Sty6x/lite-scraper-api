@@ -1,3 +1,6 @@
+import { SessionData } from "express-session";
+import { scraped_data } from "./scraper_types";
+
 export type task_schema = {
   [key: string]: any;
 };
@@ -11,3 +14,10 @@ export type user_query = {
   };
   dataQuery: task_schema;
 };
+export interface retrieved_data_query extends SessionData {
+  userQuery: user_query;
+  taskQuery: {
+    [key: string]: any;
+    data: scraped_data;
+  };
+}

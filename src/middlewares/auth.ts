@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
   const session_store = req.sessionStore;
+  console.log(req.session);
   session_store.get(req.cookies.sess_id, (err, session) => {
     console.log({ sess_id: req.cookies.sess_id, session });
     if (session !== null) {
