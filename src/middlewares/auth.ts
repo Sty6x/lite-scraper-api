@@ -1,25 +1,29 @@
 import { Response, Request, NextFunction } from "express";
+import { SessionData } from "express-session";
+
+declare module "express-session" {
+  interface SessionData {
+    date_created?: string;
+  }
+}
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
   const session_store = req.sessionStore;
-  console.log(req.session);
-  session_store.get(req.cookies.sess_id, (err, session) => {
-    console.log({ sess_id: req.cookies.sess_id, session });
-    if (session !== null) {
-      res.send({ session_id: req.cookies.sess_id });
-      return;
-    } else {
-      console.log("Session does not exist");
+  session_store.get(
+    req.session.id,
+    (err: any, session: SessionData | null | undefined) => {
+      if (session !== null) {
+        console.log(req.session.id);
+        res.send({ session_id: req.session.id });
+        return;
+      }
       next();
-    }
-  });
+    },
+  );
 }
 
 export async function create_client_session(req: Request, res: Response) {
-  console.log("create client");
-  const session_store = req.sessionStore;
-  session_store.set(req.session.id, req.session, (err) => {
-    res.cookie("sess_id", req.session.id);
-    res.send({ session_id: "CREATED" });
-  });
+  req.session.date_created = new Date().toDateString();
+  console.log({ sess_id: req.session.id, session: req.session });
+  res.send({ session_id: "CREATED" });
 }

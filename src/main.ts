@@ -24,7 +24,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
       maxAge: 100000,
     },
   }),
@@ -34,16 +33,6 @@ app.listen(port, async () => {
   console.log("Web scraping service");
 });
 
-// app.get("/", auth, create_client_session);
+app.get("/", auth, create_client_session);
 
-app.get("/", (req: any, res: Response) => {
-  console.log();
-  if (req.session.views) {
-    req.session.views++;
-  } else {
-    req.session.views = 1;
-  }
-  console.log({ sess_id: req.session.id, ...req.session });
-  res.send(`Views: ${req.session.views}`);
-});
 app.use("/api/v1/scrape", api_routes);
