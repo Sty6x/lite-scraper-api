@@ -27,7 +27,8 @@ export interface scraped_data extends t_task {
 
 // to be exported to the client
 export type t_task = {
-  id: string;
+  sessID: string;
+  taskID: string;
   websiteURL: string;
   multipageConfig?: {
     starting_page: number;

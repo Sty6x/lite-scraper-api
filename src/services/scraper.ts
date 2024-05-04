@@ -42,7 +42,6 @@ export class Scraper {
     raw_data: Array<Locator[]>,
   ): Promise<Array<task_schema>> {
     const task_keys = Object.keys(this.task.taskSchema);
-    console.log(raw_data);
     const populate_query = raw_data[0].map(async (_, i) => {
       let populated_query: { [key: string]: any } = {};
       for (let j = 0; j < task_keys.length; j++) {
