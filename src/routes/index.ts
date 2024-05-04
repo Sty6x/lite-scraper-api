@@ -1,7 +1,7 @@
 import express, { Response, Request } from "express";
 import { parser } from "../middlewares/parser";
-import { ScraperInterface } from "../services/scraper_interface";
-import { writeFile, readFile } from "fs/promises";
+// import { ScraperInterface } from "../services/scraper_interface";
+// import { writeFile, readFile } from "fs/promises";
 
 const router = express.Router();
 
@@ -23,14 +23,14 @@ router.post("/", parser, async (req: Request, res: Response) => {
   // });
 });
 
-router.get("/download", async (req: Request, res: Response) => {
-  res.download("./user_query.json", (err) => {
-    if (err) {
-      console.log("err");
-      throw err;
-    } else {
-      console.log("file recieved");
-    }
-  });
-});
+// router.get("/download", async (req: Request, res: Response) => {
+//   res.download("./user_query.json", (err) => {
+//     if (err) {
+//       console.log("err");
+//       throw err;
+//     } else {
+//       console.log("file recieved");
+//     }
+//   });
+// });
 module.exports = router;

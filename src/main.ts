@@ -5,7 +5,7 @@ import MongoStore from "connect-mongo";
 import "dotenv/config";
 
 const cookieParser = require("cookie-parser");
-const api_routes = require;
+const api_routes = require("./routes/index");
 const express = require("express");
 const app: Express = express();
 const port = 3005;
