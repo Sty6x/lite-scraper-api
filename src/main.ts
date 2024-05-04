@@ -33,6 +33,9 @@ app.listen(port, async () => {
   console.log("Web scraping service");
 });
 
-app.get("/", auth, create_client_session);
+// app.get("/", auth, create_client_session);
+app.get("/", (req: Request, res: Response) => {
+  res.send({ message: "YAYEET" });
+});
 
 app.use("/api/v1/scrape", api_routes);

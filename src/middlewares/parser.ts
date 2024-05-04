@@ -1,20 +1,22 @@
 import { Request, Response, NextFunction } from "express";
-import { user_query } from "../types/user_query_types";
+import { t_task } from "../types/project_types";
 
 async function parser(req: Request, res: Response, next: NextFunction) {
-  const req_body: user_query = { ...req.body };
-  console.log(req_body.dataQuery);
-  const parseDataSchema: user_query = {
+  console.log(req.body);
+  const incoming_task: t_task = {
+    id: "New id",
     ...req.body,
-    dataQuery: JSON.parse(req.body.dataQuery),
+    taskSchema: JSON.parse(req.body.taskSchema),
+    data: [],
   };
-  if (req_body.multipageConfig === undefined) {
-    req.body.parsedData = { ...parseDataSchema };
+  console.log(incoming_task);
+  if (incoming_task.multipageConfig === undefined) {
+    req.body.parsedData = { ...incoming_task };
     next();
     return;
   }
   req.body.parsedData = {
-    ...parseDataSchema,
+    ...incoming_task,
     multipageConfig: JSON.parse(req.body.multipageConfig),
   };
   next();

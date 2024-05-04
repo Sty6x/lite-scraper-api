@@ -6,12 +6,21 @@ import { writeFile, readFile } from "fs/promises";
 const router = express.Router();
 
 router.post("/", parser, async (req: Request, res: Response) => {
-  const scraper = new ScraperInterface(req.body.parsedData);
-  await scraper.initialize_scraper();
-  const scraped_data = await scraper.multi_page();
-  const toJSONdata = JSON.stringify({});
-  const parsedData = await writeFile("./users.json", toJSONdata, "utf-8");
-  res.send({ queried: {} });
+  // const sess_store = req.sessionStore;
+  console.log("LOGGED");
+
+  const new_task = req.body.parsedData;
+  // const scraper = new ScraperInterface(new_task);
+  // await scraper.initialize_scraper();
+  // const scraped_data = await scraper.single_page();
+  // sess_store.get(req.sessionID, async (err, sess_data) => {
+  //   if (sess_data !== undefined || sess_data !== null) {
+  //     await writeFile("./users.json", JSON.stringify(sess_data), "utf-8");
+  //     res.send({ Message: "Scrape successful." });
+  //     return;
+  //   }
+  res.send({ Message: "Data does not exist." });
+  // });
 });
 
 router.get("/download", async (req: Request, res: Response) => {

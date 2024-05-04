@@ -1,13 +1,13 @@
 import { Browser, Locator, Page, chromium } from "playwright";
 import { error } from "console";
-import { task_schema, user_query } from "../types/user_query_types";
+import { t_task, task_schema } from "../types/project_types";
 
 export class Scraper {
-  query: user_query;
+  task: t_task;
   page: Page | null;
   browser: Browser | null;
-  constructor(user_query: user_query) {
-    this.query = user_query;
+  constructor(new_task: t_task) {
+    this.task = new_task;
     this.page = null;
     this.browser = null;
   }
@@ -25,30 +25,31 @@ export class Scraper {
   }
 
   private async get_raw_data() {
-    const query_values = Object.values(this.query.dataQuery);
-    const map_query = query_values.map(async (query) => {
+    const task_schema_values = Object.values(this.task.taskSchema);
+    const map_schema = task_schema_values.map(async (value) => {
       try {
         if (!this.page) throw error;
-        const queried_items = await this.page.locator(query).all();
-        return queried_items;
+        const located_items = await this.page.locator(value).all();
+        return located_items;
       } catch (e) {
         throw error(e);
       }
     });
-    const raw_data = await Promise.all(map_query);
+    const raw_data = await Promise.all(map_schema);
     return raw_data;
   }
   private async get_data(
-    raw_data: Array<Locator[]>
+    raw_data: Array<Locator[]>,
   ): Promise<Array<task_schema>> {
-    const query_keys = Object.keys(this.query.dataQuery);
+    const task_keys = Object.keys(this.task.taskSchema);
+    console.log(raw_data);
     const populate_query = raw_data[0].map(async (_, i) => {
       let populated_query: { [key: string]: any } = {};
-      for (let j = 0; j < query_keys.length; j++) {
+      for (let j = 0; j < task_keys.length; j++) {
         const query_item = raw_data[j][i];
         if (query_item === undefined) break;
         const data = await query_item.textContent();
-        populated_query[query_keys[j]] = data?.trim();
+        populated_query[task_keys[j]] = data?.trim();
       }
       return populated_query;
     });
