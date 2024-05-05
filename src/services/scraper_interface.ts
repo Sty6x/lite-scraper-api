@@ -44,7 +44,7 @@ export class ScraperInterface extends Scraper {
         pages.push({ page: page_count, pageData: scraped_data });
         page_count++;
         await this.page?.goto(
-          "https://www.amazon.ae/s?k=phones&page=2&ref=sr_pg_2",
+          "https://www.amazon.ae/s?k=phones&page=2&ref=sr_pg_2"
         );
       }
       this.browser?.close();

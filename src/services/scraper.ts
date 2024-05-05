@@ -16,9 +16,9 @@ export class Scraper {
       const raw_data = await this.get_raw_data();
       const populated_query = await this.get_data(raw_data as Array<Locator[]>);
       return populated_query;
-    } catch (error) {
-      console.error("Driver does not exist.");
-      console.error(error);
+    } catch (e) {
+      console.error("Something went wrong.");
+      console.error(e);
       await this.browser?.close();
       return [];
     }
@@ -28,18 +28,18 @@ export class Scraper {
     const task_schema_values = Object.values(this.task.taskSchema);
     const map_schema = task_schema_values.map(async (value) => {
       try {
-        if (!this.page) throw error;
+        if (!this.page) throw "Page does not exist.";
         const located_items = await this.page.locator(value).all();
         return located_items;
       } catch (e) {
-        throw error(e);
+        console.error(e);
       }
     });
     const raw_data = await Promise.all(map_schema);
     return raw_data;
   }
   private async get_data(
-    raw_data: Array<Locator[]>,
+    raw_data: Array<Locator[]>
   ): Promise<Array<task_schema>> {
     const task_keys = Object.keys(this.task.taskSchema);
     const populate_query = raw_data[0].map(async (_, i) => {
