@@ -1,9 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import { SessionData } from "express-session";
+import { t_task } from "../types/project_types";
 
 declare module "express-session" {
   interface SessionData {
-    date_created?: string;
+    date_created: string;
+    tasks: Array<t_task>;
   }
 }
 
@@ -13,7 +15,8 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     req.session.id,
     (err: any, session: SessionData | null | undefined) => {
       if (session !== null) {
-        console.log(req.session.id);
+        console.log(req.session);
+        console.log(req.cookies);
         res.send({ session_id: req.session.id });
         return;
       }
@@ -24,6 +27,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
 
 export async function create_client_session(req: Request, res: Response) {
   req.session.date_created = new Date().toDateString();
-  console.log({ sess_id: req.session.id, session: req.session });
+  req.session.tasks = [];
+  console.log(req.cookies);
   res.send({ session_id: "CREATED" });
 }
