@@ -17,7 +17,7 @@ export class Scraper {
       const populated_query = await this.get_data(raw_data as Array<Locator[]>);
       return populated_query;
     } catch (error) {
-      console.error("Something went wrong.");
+      console.error("Driver does not exist.");
       console.error(error);
       await this.browser?.close();
       return [];
