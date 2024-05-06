@@ -26,12 +26,12 @@ app.use(
     cookie: {
       maxAge: 1000000,
     },
-  }),
+  })
 );
 
 app.listen(port, async () => {
   console.log("Web scraping service");
 });
 
-app.get("/*", auth, create_client_session);
-app.use("/api/v1/scrape", api_routes);
+app.get("/", auth, create_client_session);
+app.use("/api/v1/scraper", api_routes);

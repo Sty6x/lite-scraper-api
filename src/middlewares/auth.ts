@@ -15,19 +15,16 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     req.session.id,
     (err: any, session: SessionData | null | undefined) => {
       if (session !== null) {
-        console.log(req.session);
-        console.log(req.cookies);
         res.send({ session_id: req.session.id });
         return;
       }
       next();
-    },
+    }
   );
 }
 
 export async function create_client_session(req: Request, res: Response) {
   req.session.date_created = new Date().toDateString();
   req.session.tasks = [];
-  console.log(req.cookies);
   res.send({ session_id: "CREATED" });
 }
