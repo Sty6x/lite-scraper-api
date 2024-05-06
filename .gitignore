@@ -1,4 +1,4 @@
 node_modules/
 .env
-screenshot.png
-user_query.json
+/screenshot.png
+/user_query.json
