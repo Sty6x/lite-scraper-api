@@ -15,16 +15,16 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     req.session.id,
     (err: any, session: SessionData | null | undefined) => {
       if (session !== null) {
-        res.send({ session_id: req.session.id });
+        res.send({ session_id: req.session.id, message: "Session Exists" });
         return;
       }
       next();
-    }
+    },
   );
 }
 
 export async function create_client_session(req: Request, res: Response) {
   req.session.date_created = new Date().toDateString();
   req.session.tasks = [];
-  res.send({ session_id: "CREATED" });
+  res.send({ session_id: req.sessionID, message: "New Session Created" });
 }
