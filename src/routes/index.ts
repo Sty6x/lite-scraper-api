@@ -49,7 +49,7 @@ router.post("/scrape", parser, async (req: Request, res: Response) => {
 
 router.get("/download/:taskID", async (req: Request, res: Response) => {
   const current_task = req.session.tasks?.find(
-    (task) => task.taskID === req.params.taskID
+    (task) => task.taskID === req.params.taskID,
   );
   const convert_json = JSON.stringify(current_task);
   try {

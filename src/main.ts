@@ -13,7 +13,7 @@ const app: Express = express();
 const fs = require("fs");
 const PORT = process.env.PORT || 3005;
 const chrome_extension_origin =
-  "chrome-extension://lccoddheifnemjdpojidcfifeiplpboi";
+  "chrome-extension://pmnpcehiaohjmiklhlfnehlllnooijao";
 
 const cors_options = {
   origin: chrome_extension_origin,

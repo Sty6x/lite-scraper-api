@@ -15,7 +15,12 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     req.session.id,
     (err: any, session: SessionData | null | undefined) => {
       if (session !== null) {
-        res.send({ session_id: req.session.id, message: "Session Exists" });
+        res.send({
+          session_id: req.session.id,
+          message: "Session Exists",
+          can_sign_in: true,
+          ...req.session,
+        });
         return;
       }
       next();
@@ -24,7 +29,17 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function create_client_session(req: Request, res: Response) {
-  req.session.date_created = new Date().toDateString();
-  req.session.tasks = [];
-  res.send({ session_id: req.sessionID, message: "New Session Created" });
+  try {
+    console.log("Successfully created a new session");
+    req.session.date_created = new Date().toDateString();
+    req.session.tasks = [];
+    res.send({
+      session_id: req.sessionID,
+      message: "New Session Created",
+      can_sign_in: true,
+      ...req.session,
+    });
+  } catch (e) {
+    res.send({ message: "Something went wrong" });
+  }
 }
