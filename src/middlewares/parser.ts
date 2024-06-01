@@ -1,13 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import { t_task } from "../types/project_types";
-import { uid } from "uid";
 
-async function parser(req: Request, res: Response, next: NextFunction) {
+export default async function parser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  console.log(req.body);
   const incoming_task: t_task = {
     sessID: req.sessionID,
-    taskID: uid(16),
     ...req.body,
-    taskSchema: JSON.parse(req.body.taskSchema),
+    taskSchema: req.body.taskSchema,
     data: [],
   };
   if (incoming_task.multipageConfig === undefined) {
@@ -21,5 +24,3 @@ async function parser(req: Request, res: Response, next: NextFunction) {
   };
   next();
 }
-
-export { parser };

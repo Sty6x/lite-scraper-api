@@ -1,8 +1,7 @@
 import express, { Response, Request } from "express";
-import { parser } from "../middlewares/parser";
+import parser from "../middlewares/parser";
 import { t_task } from "../types/project_types";
 import { ScraperInterface as Scraper } from "../services/scraper_interface";
-import { auth } from "../middlewares/auth";
 import { writeFile } from "fs/promises";
 
 const router = express.Router();
@@ -19,13 +18,21 @@ router.post("/scrape", parser, async (req: Request, res: Response) => {
     await scraper.initialize_scraper();
     const new_task = await scraper.single_page();
     if (req.cookies["connect.sid"] === undefined) {
-      res.json({ is_downloadable: false, Message: "Session Does not exist." });
+      res.json({
+        is_downloadable: false,
+        Message: "Session Does not exist.",
+        session_expired: true,
+      });
       return;
     }
     sess_store.get(session.id, (err, session_data) => {
       if (err) res.json({ Message: err });
       if (session_data === null || session_data === undefined) {
-        res.json({ is_downloadable: false, Message: "Session Expired" });
+        res.json({
+          is_downloadable: false,
+          Message: "Session Expired",
+          session_expired: true,
+        });
       }
       const update_tasks = [
         new_task,
@@ -36,6 +43,8 @@ router.post("/scrape", parser, async (req: Request, res: Response) => {
         is_downloadable: true,
         Message: "Success",
         taskID: new_task.taskID,
+        task: new_task,
+        session_expired: false,
       });
     });
   } catch (e) {
@@ -43,6 +52,7 @@ router.post("/scrape", parser, async (req: Request, res: Response) => {
     res.json({
       is_downloadable: false,
       Message: "Something went wrong with your request.",
+      session_expired: false,
     });
   }
 });
