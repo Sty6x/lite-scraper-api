@@ -1,5 +1,4 @@
 import { Browser, Locator, Page, chromium } from "playwright";
-import { error } from "console";
 import { t_task, task_schema } from "../types/project_types";
 
 export class Scraper {
@@ -39,7 +38,7 @@ export class Scraper {
     return raw_data;
   }
   private async get_data(
-    raw_data: Array<Locator[]>
+    raw_data: Array<Locator[]>,
   ): Promise<Array<task_schema>> {
     const task_keys = Object.keys(this.task.taskSchema);
     const populate_query = raw_data[0].map(async (_, i) => {

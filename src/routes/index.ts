@@ -2,12 +2,11 @@ import express, { Response, Request } from "express";
 import parser from "../middlewares/parser";
 import { t_task } from "../types/project_types";
 import { ScraperInterface as Scraper } from "../services/scraper_interface";
-import { writeFile } from "fs/promises";
 
 const router = express.Router();
 
 router.get("/", (req: Request, res: Response) => {
-  res.json({ Message: "Welcome to my scraping service or something" });
+  res.json({ Message: "Welcome to lite scraper." });
 });
 router.post("/scrape", parser, async (req: Request, res: Response) => {
   const session = req.session;
@@ -62,19 +61,19 @@ router.get("/download/:taskID", async (req: Request, res: Response) => {
     (task) => task.taskID === req.params.taskID,
   );
   const convert_json = JSON.stringify(current_task);
-  try {
-    await writeFile("./user_query.json", convert_json, "utf8");
-    res.download("./user_query.json", (err) => {
-      try {
-        if (err) throw err;
-        console.log("file recieved");
-      } catch (e) {
-        console.log("Unable to download.");
-        console.error(e);
-      }
+  if (current_task === undefined) {
+    res.json({
+      Message:
+        "Unable to download because the task does not exist in this current session.",
+      taskID_lookup: req.params.taskID,
+      is_downloadable: false,
     });
-  } catch (e) {
-    res.json({ Message: "Unable to download" });
+    return;
   }
+  res.json({
+    Message: "Success",
+    task_data: convert_json,
+    is_downloadable: true,
+  });
 });
 module.exports = router;
