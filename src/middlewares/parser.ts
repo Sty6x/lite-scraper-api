@@ -6,7 +6,6 @@ export default async function parser(
   res: Response,
   next: NextFunction,
 ) {
-  console.log(req.body);
   const incoming_task: t_task = {
     sessID: req.sessionID,
     ...req.body,

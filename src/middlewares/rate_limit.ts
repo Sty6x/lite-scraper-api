@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 
 const IP_blocklist = new Map();
 const IP_whitelist = new Map();
-const LIMIT = 2;
+const LIMIT = 1;
+const RESET_TIMER = 10;
 
 type t_white_listed_user = {
   ip: string;
@@ -15,9 +16,11 @@ type t_block_listed_user = {
   reset_timer: string | Date;
 };
 
-function is_timeout_expired(time: string | Date): boolean {
-  console.log(time);
-  return true;
+function is_timeout_expired(reset_timer: string | Date): boolean {
+  const current_time = new Date();
+
+  console.log({ current_time, reset_timer });
+  return current_time > reset_timer ? true : false;
 }
 
 export async function rate_limiting(
@@ -30,10 +33,9 @@ export async function rate_limiting(
   if (IP_blocklist.has(ip)) {
     const current_user_ip: t_block_listed_user = IP_blocklist.get(ip);
     if (is_timeout_expired(current_user_ip.reset_timer)) {
-      // need to process the reset timer, create a function that takes in a date and
-      // check if it is more than x hours and return a boolean
       IP_blocklist.delete(ip);
       IP_whitelist.set(ip, { ip, limit: LIMIT, calls: 1 });
+      console.log({ m: "Reset expired", ip: IP_whitelist.get(ip) });
       next();
       return;
     }
@@ -56,8 +58,10 @@ export async function rate_limiting(
   }
   const current_user_ip: t_white_listed_user = IP_whitelist.get(ip);
   if (current_user_ip.calls >= current_user_ip.limit) {
-    IP_blocklist.set(ip, { ip, reset_timer: new Date() });
-    console.log({ m: "Call expired", ip: IP_blocklist.get(ip) });
+    const reset_timer = new Date();
+    reset_timer.setSeconds(new Date().getSeconds() + RESET_TIMER);
+    IP_blocklist.set(ip, { ip, reset_timer });
+    console.log({ m: "Call limit exceeded", ip: IP_blocklist.get(ip) });
     res.json({
       Message: "Call limit exceeded",
       is_downloadable: false,
@@ -68,7 +72,7 @@ export async function rate_limiting(
       ...current_user_ip,
       calls: current_user_ip.calls + 1,
     });
-    console.log({ m: "Increment", ip: IP_whitelist.get(ip) });
+    console.log({ m: "Callable", ip: IP_whitelist.get(ip) });
     next();
   }
 }
