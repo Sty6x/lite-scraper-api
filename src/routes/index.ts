@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/", (req: Request, res: Response) => {
   res.json({ Message: "Welcome to lite scraper." });
 });
-router.post("/scrape", rate_limiting, parser, scrape_handler);
+router.post("/scrape", parser, rate_limiting, scrape_handler);
 
 router.get("/download/:taskID", download_handler);
 module.exports = router;
