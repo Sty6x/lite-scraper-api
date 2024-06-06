@@ -12,6 +12,7 @@ const cors = require("cors");
 const fs = require("fs");
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
+
 const chrome_extension_origin =
   "chrome-extension://pmnpcehiaohjmiklhlfnehlllnooijao";
 
@@ -39,7 +40,7 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: "none",
-      maxAge: 1000000,
+      maxAge: 10000,
     },
   }),
 );

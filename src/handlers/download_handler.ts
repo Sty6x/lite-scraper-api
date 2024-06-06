@@ -7,7 +7,7 @@ export default async (req: Request, res: Response) => {
   if (current_task === undefined) {
     res.json({
       Message:
-        "Unable to download because the task does not exist in this current session.",
+        "Task does not exist, click on the SCRAPE button before downloading.",
       taskID_lookup: req.params.taskID,
       is_downloadable: false,
     });

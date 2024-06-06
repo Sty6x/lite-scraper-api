@@ -23,11 +23,19 @@ function is_timeout_expired(reset_timer: string | Date): boolean {
   return current_time > reset_timer ? true : false;
 }
 
-export async function rate_limiting(
+export async function ip_rate_limiter(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
+  if (req.cookies["connect.sid"] === undefined) {
+    res.json({
+      is_downloadable: false,
+      Message: "Session has expired please restart the extension.",
+      session_expired: true,
+    });
+    return;
+  }
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
   if (IP_blocklist.has(ip)) {
@@ -48,8 +56,6 @@ export async function rate_limiting(
     return;
   }
 
-  // if the user is new
-  // set new ip
   if (!IP_whitelist.has(ip)) {
     IP_whitelist.set(ip, { ip, limit: LIMIT, calls: 1 });
     console.log({ m: "not expired", ip: IP_whitelist.get(ip) });
