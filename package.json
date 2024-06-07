@@ -8,7 +8,7 @@
     "start": "node dist/main.js",
     "build": "npx tsc",
     "dev": "nodemon src/main.ts",
-    "postinstall": "npx playwright install --with-deps",
+    "postinstall": "npx playwright install --with-deps"
   },
   "engines": {
     "node": ">=16.x"
