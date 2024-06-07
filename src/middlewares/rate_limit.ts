@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 
 const IP_blocklist = new Map();
 const IP_whitelist = new Map();
-const LIMIT = 1;
-const RESET_TIMER = 10;
+const LIMIT = 100;
+const RESET_TIMER = 24 * 60 * 60 * 1000;
 
 type t_white_listed_user = {
   ip: string;
@@ -43,7 +43,7 @@ export async function ip_rate_limiter(
     if (is_timeout_expired(current_user_ip.reset_timer)) {
       IP_blocklist.delete(ip);
       IP_whitelist.set(ip, { ip, limit: LIMIT, calls: 1 });
-      console.log({ m: "Reset expired", ip: IP_whitelist.get(ip) });
+      console.log({ log_message: "Reset expired", ip: IP_whitelist.get(ip) });
       next();
       return;
     }
@@ -58,7 +58,7 @@ export async function ip_rate_limiter(
 
   if (!IP_whitelist.has(ip)) {
     IP_whitelist.set(ip, { ip, limit: LIMIT, calls: 1 });
-    console.log({ m: "not expired", ip: IP_whitelist.get(ip) });
+    console.log({ log_message: "not expired", ip: IP_whitelist.get(ip) });
     next();
     return;
   }
@@ -67,7 +67,10 @@ export async function ip_rate_limiter(
     const reset_timer = new Date();
     reset_timer.setSeconds(new Date().getSeconds() + RESET_TIMER);
     IP_blocklist.set(ip, { ip, reset_timer });
-    console.log({ m: "Call limit exceeded", ip: IP_blocklist.get(ip) });
+    console.log({
+      log_message: "Call limit exceeded",
+      ip: IP_blocklist.get(ip),
+    });
     res.json({
       Message: "Call limit exceeded",
       is_downloadable: false,
@@ -78,7 +81,7 @@ export async function ip_rate_limiter(
       ...current_user_ip,
       calls: current_user_ip.calls + 1,
     });
-    console.log({ m: "Callable", ip: IP_whitelist.get(ip) });
+    console.log({ log_message: "Callable", ip: IP_whitelist.get(ip) });
     next();
   }
 }

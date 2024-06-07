@@ -4,7 +4,9 @@ import { auth, create_client_session } from "./middlewares/auth";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import "dotenv/config";
+import helmet from "helmet";
 
+const morgan = require("morgan");
 const app: Application = express();
 const cookieParser = require("cookie-parser");
 const api_routes = require("./routes/index");
@@ -22,6 +24,10 @@ const cors_options = {
   allowHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+app.use(helmet());
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms"),
+);
 app.set("trust proxy", true);
 app.use(cors(cors_options));
 app.use(cookieParser());
@@ -33,23 +39,27 @@ app.use(
       mongoUrl: process.env.DB_URI,
       collectionName: "sessions",
     }),
-    secret: "1234",
+    secret: process.env.SECRET as string,
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: true,
       httpOnly: true,
       sameSite: "none",
-      maxAge: 10000,
+      maxAge: 24 * 60 * 60 * 1000,
     },
   }),
 );
-const http_options: https.ServerOptions = {
-  key: fs.readFileSync("key.pem"),
-  cert: fs.readFileSync("cert.pem"),
-};
+// const http_options: https.ServerOptions = {
+//   key: fs.readFileSync("key.pem"),
+//   cert: fs.readFileSync("cert.pem"),
+// };
 
-https.createServer(http_options, app).listen({ port: PORT, host: HOST }, () => {
+// https.createServer(http_options, app).listen({ port: PORT, host: HOST }, () => {
+//   console.log(`Server running on https://localhost:${PORT}`);
+// });
+//
+app.listen({ port: PORT, host: HOST }, () => {
   console.log(`Server running on https://localhost:${PORT}`);
 });
 app.get("/", auth, create_client_session);

@@ -5,3 +5,5 @@ node_modules/
 /cert.pem
 /csr.pem
 /key.pem
+.vercel
+dist/
