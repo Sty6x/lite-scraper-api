@@ -59,7 +59,7 @@ app.use(
 //   console.log(`Server running on https://localhost:${PORT}`);
 // });
 //
-app.listen({ PORT, HOST }, () => {
+app.listen({ port: PORT, host: HOST }, () => {
   console.log(`Server running on https://localhost:${PORT}`);
 });
 app.get("/", auth, create_client_session);

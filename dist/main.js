@@ -54,7 +54,7 @@ app.use((0, express_session_1.default)({
 //   console.log(`Server running on https://localhost:${PORT}`);
 // });
 //
-app.listen({ PORT, HOST }, () => {
+app.listen({ port: PORT, host: HOST }, () => {
     console.log(`Server running on https://localhost:${PORT}`);
 });
 app.get("/", auth_1.auth, auth_1.create_client_session);
