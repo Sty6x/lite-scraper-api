@@ -8,6 +8,18 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
+# Installing Ngrok for tunneling requests from ngrok servers to 
+# the local docker container.
+RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+  | tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+  && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" \
+  | tee /etc/apt/sources.list.d/ngrok.list \
+  && apt update \
+  && apt install ngrok
+
+RUN ngrok config add-authtoken 2hQv61hcHHEHDFGq9TcZycPVq1B_3HBvwBuK4AtWWpMHtVaY1
+
+
 # Installing playwright and other browsers
 RUN npm install
 RUN npx playwright install --with-deps
@@ -26,5 +38,7 @@ RUN npm run build
 EXPOSE 3000
 
 # Command to run the application
-CMD ["nodemon", "./dist/main.js"]
+# CMD ["nodemon", "./dist/main.js"]
+CMD node "./dist/main.js" & ngrok http https://localhost:3000
+
 
