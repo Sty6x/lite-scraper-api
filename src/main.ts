@@ -50,16 +50,12 @@ app.use(
     },
   }),
 );
-// const http_options: https.ServerOptions = {
-//   key: fs.readFileSync("key.pem"),
-//   cert: fs.readFileSync("cert.pem"),
-// };
+const http_options: https.ServerOptions = {
+  key: fs.readFileSync("key.pem"),
+  cert: fs.readFileSync("cert.pem"),
+};
 
-// https.createServer(http_options, app).listen({ port: PORT, host: HOST }, () => {
-//   console.log(`Server running on https://localhost:${PORT}`);
-// });
-//
-app.listen({ port: PORT, host: HOST }, () => {
+https.createServer(http_options, app).listen({ port: PORT, host: HOST }, () => {
   console.log(`Server running on https://localhost:${PORT}`);
 });
 app.get("/", auth, create_client_session);
