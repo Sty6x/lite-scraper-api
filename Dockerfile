@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-# Installing Ngrok for tunneling requests from ngrok servers to 
+# Installing Ngrok for tunneling requests from ngrok servers to
 # the local docker container.
 ARG TUNNEL_KEY
 RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
@@ -28,17 +28,15 @@ RUN npm install
 RUN npx playwright install --with-deps
 # Updating playwright
 RUN npm install -g nodemon
-RUN npm install -g typescript 
-RUN npx playwright install 
+RUN npm install -g typescript
+RUN npx playwright install
 
 
 # build project
-RUN npm run build 
+RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 443
 
 # Command to run the application
 CMD node "./dist/main.js" & ngrok http --domain=cosmic-briefly-polliwog.ngrok-free.app 443
-
-
